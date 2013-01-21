@@ -28,7 +28,7 @@ public class Environment {
 	public static String getSeleniumServerUrl() {
 
 		if (seleniumServerUrl == null || seleniumServerUrl.equals("")) {
-			seleniumServerUrl = "http://localhost";
+			seleniumServerUrl = "http://localhost:4444/wd/hub";
 		}
 
 		log.debug("running tests on env: " + seleniumServerUrl);
@@ -42,8 +42,12 @@ public class Environment {
 		else
 
 			try {
-				return (new File(".")).getCanonicalPath();
-			} catch (IOException e) {
+//				String appRoot = (new File(".")).getCanonicalPath();
+				appRoot = java.lang.System.getProperties().getProperty("appRoot");
+				log.debug("Application root is: " + appRoot);
+				return appRoot;
+
+			} catch (Exception e) {
 				log.warn("WARNING! could not get application root, set appRoot = ''");
 			}
 		return "";
@@ -69,8 +73,9 @@ public class Environment {
 	private static String getLocalAndTestDirectory() {
 		try {
 
-			String testDir = new java.io.File(".").getCanonicalPath()
-					+ File.separator + "test_data" + File.separator;
+//			String testDir = new java.io.File(".").getCanonicalPath()
+//					+ File.separator + "test_data" + File.separator;
+			String testDir = getTestDir();
 			log.debug("Test dir: " + testDir);
 			return (testDir);
 
@@ -80,5 +85,25 @@ public class Environment {
 		}
 
 		// return test_directory;
+	}
+	
+	
+	public static String getTestDir() {
+		if (isWindows())
+			return "C:\\test_data\\";
+		if (isUnix())
+			return "~/test_data/";
+		return File.separator + "test_data" + File.separator;
+
+	}
+
+	public static boolean isWindows() {
+		String os = System.getProperty("os.name").toLowerCase();
+		return (os.indexOf("win") >= 0);
+	}
+
+	public static boolean isUnix() {
+		String os = System.getProperty("os.name").toLowerCase();
+		return (os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0);
 	}
 }

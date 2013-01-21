@@ -1219,7 +1219,11 @@ public class WebdriverMethods extends SeleneseTestBase {
 
 	public void sendPageDown() {
 		driver.switchTo().activeElement().sendKeys(Keys.PAGE_DOWN);
-
+	}
+	
+	
+	public void sendEnd() {
+		driver.switchTo().activeElement().sendKeys(Keys.END);
 	}
 
 	public void sendEnter() {

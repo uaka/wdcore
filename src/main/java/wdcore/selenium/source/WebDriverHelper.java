@@ -28,7 +28,7 @@ public class WebDriverHelper extends HelperBase {
 			.getLogger(WebDriverHelper.class);
 
 	private WebDriver driver;
-
+//	private String browserMode = BrowsersMap.FF;
 	private String defaultHub = "http://localhost:4444/wd/hub"; // change to
 	// "http://myserver:4444/wd/hub"
 	// to use remote webdriver by
@@ -42,6 +42,10 @@ public class WebDriverHelper extends HelperBase {
 	public void setDefaultHub(String newDefaultHub) {
 		defaultHub = newDefaultHub;
 	}
+//	
+//	public void setBrowser(String browser) {
+//		browserMode = browser;
+//	}
 
 	private WebDriver newWebDriver(String hub, String browserMode) {
 		driver = (hub == null) ? createLocalDriver(browserMode)
@@ -55,10 +59,10 @@ public class WebDriverHelper extends HelperBase {
 	public WebDriverHelper(Application manager) {
 		super(manager);
 		setDefaultHub(manager.getProperty("serverHost"));
-		String browser = manager.getProperty("browser");
-		log.debug("Going to start " + browser + " on " + defaultHub);
-
 		String browserMode = manager.getProperty("browser", BrowsersMap.FF);
+		log.debug("Going to start " + browserMode + " on " + defaultHub);
+
+//		String browserMode = manager.getProperty("browser", BrowsersMap.FF);
 		//
 		// String hub = manager.getProperty("serverHost");
 		// setDefaultHub(hub);
@@ -120,13 +124,13 @@ public class WebDriverHelper extends HelperBase {
 			desiredCapabilities.setCapability(FirefoxDriver.PROFILE, profile);
 		}
 
-//		desiredCapabilities.setJavascriptEnabled(true);
+		// desiredCapabilities.setJavascriptEnabled(true);
 		try {
-			return new RemoteWebDriver(new URL(hub), //TODO
+			return new ScreenshotRemoteWebDriver(new URL(hub), // TODO
 					desiredCapabilities);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
-			throw new Error("Could not connect to WebDriver hub ", e);
+			throw new Error("Could not connect to remote WebDriver hub ", e);
 		}
 	}
 
