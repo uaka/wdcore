@@ -13,9 +13,9 @@ public class Environment {
 
 	protected static Logger log = LoggerFactory.getLogger(Environment.class);
 
-	public static boolean local = getLocal();
+	// public static boolean local = getLocal();
 	public static String appRoot = getAppRoot();
-	public static String testDir = getLocalAndTestDirectory();
+	// public static String testDir = getLocalAndTestDirectory();
 	public static String seleniumServerUrl = System
 			.getenv("SELENIUM_SERVER_URL");
 
@@ -25,31 +25,32 @@ public class Environment {
 	// public static String seleniumServerUrl =
 	// "http://172.16.0.14:4444/wd/hub"; //diveboard-pc Win7
 
-	public static String getSeleniumServerUrl() {
-
-		if (seleniumServerUrl == null || seleniumServerUrl.equals("")) {
-			seleniumServerUrl = "http://localhost:4444/wd/hub";
-		}
-
-		log.debug("running tests on env: " + seleniumServerUrl);
-		return seleniumServerUrl;
-	}
-
+	/*
+	 * public static String getSeleniumServerUrl() {
+	 * 
+	 * if (seleniumServerUrl == null || seleniumServerUrl.equals("")) {
+	 * seleniumServerUrl = "http://localhost:4444/wd/hub"; }
+	 * 
+	 * log.debug("running tests on env: " + seleniumServerUrl); return
+	 * seleniumServerUrl; }
+	 */
 	public static String getAppRoot() {
-		if (local)
-			return System.getProperty("user.dir");
+		// if (local)
+		// return System.getProperty("user.dir");
+		//
+		// else
 
-		else
+		try {
+			// String appRoot = (new File(".")).getCanonicalPath();
+			appRoot = java.lang.System.getProperties().getProperty("appRoot");
+			if (appRoot == null)
+				appRoot = System.getProperty("user.dir");
+			log.debug("Application root is: " + appRoot);
+			return appRoot;
 
-			try {
-//				String appRoot = (new File(".")).getCanonicalPath();
-				appRoot = java.lang.System.getProperties().getProperty("appRoot");
-				log.debug("Application root is: " + appRoot);
-				return appRoot;
-
-			} catch (Exception e) {
-				log.warn("WARNING! could not get application root, set appRoot = ''");
-			}
+		} catch (Exception e) {
+			log.warn("WARNING! could not get application root, set appRoot = ''");
+		}
 		return "";
 
 	}
@@ -57,7 +58,7 @@ public class Environment {
 	// returnes true if runs on local and false if runs on tc.diveboard.com
 	public static boolean getLocal() {
 
-		if (seleniumServerUrl == null || seleniumServerUrl.contains("local")) {
+		if (seleniumServerUrl == null) {
 
 			log.debug("Local = true");
 			return true;
@@ -70,24 +71,19 @@ public class Environment {
 		}
 	}
 
-	private static String getLocalAndTestDirectory() {
-		try {
+	/*
+	 * private static String getLocalAndTestDirectory() { try {
+	 * 
+	 * // String testDir = new java.io.File(".").getCanonicalPath() // +
+	 * File.separator + "test_data" + File.separator; String testDir =
+	 * getTestDir(); log.debug("Test dir: " + testDir); return (testDir);
+	 * 
+	 * } catch (Exception e) {
+	 * log.warn("Warning! Could not specify test_directory!"); return null; }
+	 * 
+	 * // return test_directory; }
+	 */
 
-//			String testDir = new java.io.File(".").getCanonicalPath()
-//					+ File.separator + "test_data" + File.separator;
-			String testDir = getTestDir();
-			log.debug("Test dir: " + testDir);
-			return (testDir);
-
-		} catch (Exception e) {
-			log.warn("Warning! Could not specify test_directory!");
-			return null;
-		}
-
-		// return test_directory;
-	}
-	
-	
 	public static String getTestDir() {
 		if (isWindows())
 			return "C:\\test_data\\";

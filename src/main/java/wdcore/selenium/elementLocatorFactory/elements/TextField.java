@@ -6,4 +6,6 @@ public interface TextField extends Element {
     void clear();
 
     void clearAndType(String text);
+    
+    String getText();
 }

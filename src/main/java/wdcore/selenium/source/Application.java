@@ -23,7 +23,7 @@ public class Application {
 	private WebDriverHelper webDriverHelper;
 //	private TabHelper tabHelper;
 //	private NavigationHelper navigationHelper;
-
+/*
 	public static Application getInstance() {
 		if (singleton == null) {
 			singleton = new Application();
@@ -34,6 +34,7 @@ public class Application {
 	
 	private Application() {
 	}
+	*/
 
 	public void stop() {
 		log.info("Application stop");

@@ -20,6 +20,7 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriver.Window;
 import org.openqa.selenium.WebDriverException;
 //import org.openqa.selenium.WebDriver.Window;
 import org.openqa.selenium.WebElement;
@@ -29,24 +30,21 @@ import org.openqa.selenium.interactions.Action;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.internal.Locatable;
 
-
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import com.thoughtworks.selenium.*;
 
-
-
-
 public class WebdriverMethods extends SeleneseTestBase {
-//	private static final Logger log = Logger.getLogger(WebdriverMethods.class);
-	protected static Logger log = LoggerFactory.getLogger(WebdriverMethods.class);
-	
-	public WebdriverMethods(int timeout, WebDriver driver, VerificationErrors ver) {
+
+	protected static Logger log = LoggerFactory
+			.getLogger(WebdriverMethods.class);
+
+	public WebdriverMethods(int timeout, WebDriver driver,
+			VerificationErrors ver) {
 		super();
 		this.timeout = timeout;
 		this.driver = driver;
@@ -66,15 +64,13 @@ public class WebdriverMethods extends SeleneseTestBase {
 
 	}
 
-	
-
 	public void addVerificationError(String errorText) {
 		ver.addError(errorText);
-		
-		log.error("_________________________Exception_"
-				+ ver.getErrorNum() + "____________________________");
-//		log.warn("_________________________Exception_"
-//				+ ver.verificationErrorNumber + "____________________________");
+
+		log.error("_________________________Exception_" + ver.getErrorNum()
+				+ "____________________________");
+		// log.warn("_________________________Exception_"
+		// + ver.verificationErrorNumber + "____________________________");
 		log.error(errorText);
 		// verificationErrors.append(verificationErrorNumber + " " + errorText
 		// + "\nOn page " + wd.getLocation() + "\n");
@@ -86,7 +82,7 @@ public class WebdriverMethods extends SeleneseTestBase {
 		System.out
 				.println("_______________________________________________________________");
 	}
-	
+
 	public void onTestFailure(String errorText, Object failedMethodName) {
 		log.error("_________________________Breaking Exception_____________________________");
 		log.error(errorText);
@@ -94,13 +90,13 @@ public class WebdriverMethods extends SeleneseTestBase {
 
 		// wd.makeScreenshotOnFailure();
 		makeScreenshot(Environment.appRoot + File.separator + "screenshot"
-				+ File.separator + "_failure_screenshot_" + failedMethodName 
-				 + ".png");
+				+ File.separator + "_failure_screenshot_" + failedMethodName
+				+ ".png");
 
 		log.error("Current page is " + getLocation());
 		log.error("_______________________________________________________________");
 	}
-	
+
 	public void waitForTextPresent(final String text) throws Exception {
 
 		WebDriverHelper.setImplicitWaitsOff(driver);
@@ -472,8 +468,8 @@ public class WebdriverMethods extends SeleneseTestBase {
 	public void verifyNoText(String element, String text) {
 		if ((getText(element).contains(text) || (getText(element)
 				.equalsIgnoreCase(text)))) {
-			log.warn("WARNING! text in element " + element+
-					"\n is: " + getText(element));
+			log.warn("WARNING! text in element " + element + "\n is: "
+					+ getText(element));
 		}
 
 	}
@@ -485,8 +481,8 @@ public class WebdriverMethods extends SeleneseTestBase {
 
 		if ((realText.contains(text) || (realText.contains(text.toUpperCase())) || (realText
 				.equalsIgnoreCase(text)))) {
-			addVerificationError("WARNING! text in element "
-					+ element + " is: " + getText(element) );
+			addVerificationError("WARNING! text in element " + element
+					+ " is: " + getText(element));
 
 		}
 
@@ -495,8 +491,8 @@ public class WebdriverMethods extends SeleneseTestBase {
 	public void verifyText(String element, String text) {
 		if (!(getText(element).contains(text) || (getText(element)
 				.equalsIgnoreCase(text)))) {
-			log.warn("WARNING! text is differ for element " + element+
-			"\n real text is: " + getText(element)
+			log.warn("WARNING! text is differ for element " + element
+					+ "\n real text is: " + getText(element)
 					+ "  and expected: " + text);
 		}
 
@@ -508,9 +504,9 @@ public class WebdriverMethods extends SeleneseTestBase {
 		try {
 			if (!(actual.contains(expected) || actual
 					.equalsIgnoreCase(expected))) {
-				addVerificationError("Text is differ for element "
-								+ element + " \nReal text is:\n"
-								+ getText(element) + "\nAnd expected:\n" + text);
+				addVerificationError("Text is differ for element " + element
+						+ " \nReal text is:\n" + getText(element)
+						+ "\nAnd expected:\n" + text);
 				return false;
 
 			}
@@ -539,8 +535,7 @@ public class WebdriverMethods extends SeleneseTestBase {
 
 			{
 
-				addVerificationError("No text found '" + text
-						+ "'");
+				addVerificationError("No text found '" + text + "'");
 
 			}
 		} catch (Exception e) {
@@ -569,8 +564,7 @@ public class WebdriverMethods extends SeleneseTestBase {
 
 	public void assertTextInElementPresent(String element) throws IOException {
 		if ((getText(element).equals(""))) {
-			addVerificationError("No text found in element "
-					+ element);
+			addVerificationError("No text found in element " + element);
 		}
 
 	}
@@ -583,8 +577,8 @@ public class WebdriverMethods extends SeleneseTestBase {
 			// " /n real value is: "+ getValue(element) + "  and expected: " +
 			// value);
 
-			addVerificationError("Value is differ for element "
-					+ element + " /n real value is: " + getValue(element)
+			addVerificationError("Value is differ for element " + element
+					+ " /n real value is: " + getValue(element)
 					+ "  and expected: " + value);
 
 		}
@@ -594,35 +588,36 @@ public class WebdriverMethods extends SeleneseTestBase {
 	public void assertElement(String element) throws IOException {
 		if (!isElementPresent(element))
 			// throwableFail("Element "+element +" not found!");
-			addVerificationError("Element " + element
-					+ " not found!");
-
+			addVerificationError("Element " + element + " not found!");
 	}
 
 	public void assertNoElement(String element) throws IOException {
 		if (isElementPresent(element))
 
-			addVerificationError("Element " + element
-					+ " presents!");
-
+			addVerificationError("Element " + element + " presents!");
 	}
 
 	public void assertElementVisible(String element) throws IOException {
 		if (!isVisible(element))
 
-			addVerificationError("Element " + element
-					+ " not visible!");
+			addVerificationError("Element " + element + " not visible!");
 
 	}
 
 	public void assertElementNotVisible(String element) throws IOException {
 		if (isVisible(element))
 
-			addVerificationError("Element " + element
-					+ " is visible!");
-
+			addVerificationError("Element " + element + " is visible!");
 	}
 
+	public void assertElementsCount(String element, int expectedCount) throws IOException {
+		int actualCount = getCount(element);
+		if (actualCount!= expectedCount)
+			
+			addVerificationError("Elements count of '" + element + "' = " + actualCount+
+					"but expected "+ expectedCount);
+	}
+	
 	public void open(String url) {
 		log.debug("opening url " + url);
 		driver.get(url);
@@ -704,7 +699,7 @@ public class WebdriverMethods extends SeleneseTestBase {
 	}
 
 	public void type(String element, String text) throws Exception {
-
+		log.debug("Typing text '" + text + "' in element:" + element);
 		try {
 
 			getElement(element).sendKeys(text);
@@ -841,7 +836,7 @@ public class WebdriverMethods extends SeleneseTestBase {
 
 		{
 			addVerificationError("WARNING! Could not select in element: "
-							+ element + " Error: " + e.getMessage());
+					+ element + " Error: " + e.getMessage());
 
 		}
 	}
@@ -869,8 +864,7 @@ public class WebdriverMethods extends SeleneseTestBase {
 									value.length()));
 
 		else
-			log.warn("!WARNING: incorrect value " + value
-					+ " for getAttribute");
+			log.warn("!WARNING: incorrect value " + value + " for getAttribute");
 		return "";
 
 	}
@@ -926,13 +920,9 @@ public class WebdriverMethods extends SeleneseTestBase {
 	}
 
 	// :(
-	public void mouseMoveAndCheck(String element1, String element2) // fails
-																	// with
-																	// error
-																	// Unable to
-																	// locate
-																	// element:
+	public void mouseMoveAndClick(String element1, String element2) 
 	{
+		WebDriverHelper.setImplicitWaitsOn(driver);
 		Actions builder = new Actions(driver);
 
 		builder.moveToElement(getElement(element1)).click(getElement(element2))
@@ -999,17 +989,18 @@ public class WebdriverMethods extends SeleneseTestBase {
 
 	public void uncheck(String element) {
 		WebElement webelem = getElement(element);
-
+		
 		if (webelem.isSelected())
 			webelem.click();
 	}
 
 	public void closeBrowser() {
-		log.debug("Closing browser");
-		driver.close();
+		log.debug("Closing current browser");
+		driver.quit();
 	}
 
 	public boolean isVisible(String element) {
+//		WebDriverHelper.setImplicitWaitsOn(driver);
 		try {
 			boolean result = getElement(element).isDisplayed();
 			return result;
@@ -1115,8 +1106,8 @@ public class WebdriverMethods extends SeleneseTestBase {
 
 	public void verifyElement(String element) {
 		if (!isElementPresent(element))
-			log.warn("WARNING! element " + element
-					+ " not found on page " + getLocation());
+			log.warn("WARNING! element " + element + " not found on page "
+					+ getLocation());
 
 	}
 
@@ -1169,11 +1160,17 @@ public class WebdriverMethods extends SeleneseTestBase {
 
 	}
 
-	// public final String MAXIMIZE_BROWSER_WINDOW =
+	public void selectFrame(String frameLocator) {
+		driver.switchTo().frame(getElement(frameLocator));
+	}
 
-	/*
+	public void selectTopFrame() {
+
+		driver.switchTo().defaultContent();
+	}
+
 	public void maximizeBrowserWindow() throws Exception {
-	
+
 		Window window = driver.manage().window();
 		Point zero = new Point(0, 0);
 		window.setPosition(zero);
@@ -1183,7 +1180,7 @@ public class WebdriverMethods extends SeleneseTestBase {
 				Integer.parseInt(height));
 		window.setSize(dim);
 
-	} */
+	}
 
 	public void sendKeysToActiveElement(String text) {
 		driver.switchTo().activeElement().sendKeys(text);
@@ -1220,8 +1217,7 @@ public class WebdriverMethods extends SeleneseTestBase {
 	public void sendPageDown() {
 		driver.switchTo().activeElement().sendKeys(Keys.PAGE_DOWN);
 	}
-	
-	
+
 	public void sendEnd() {
 		driver.switchTo().activeElement().sendKeys(Keys.END);
 	}
@@ -1272,8 +1268,7 @@ public class WebdriverMethods extends SeleneseTestBase {
 			((JavascriptExecutor) driver).executeScript("window.scrollBy(0,"
 					+ y + ");");
 		} catch (Exception e) {
-			log.warn("WARNING! Could not scroll to element: "
-					+ element);
+			log.warn("WARNING! Could not scroll to element: " + element);
 		}
 	}
 
@@ -1331,45 +1326,42 @@ public class WebdriverMethods extends SeleneseTestBase {
 			return null;
 		}
 	}
-	
-	
-	
-	
-	public  void assert2Strings(String name, String expected, String actual)
+
+	public void assert2Strings(String name, String expected, String actual)
 			throws Exception {
-		if (!expected.equals(actual))
-		
-			addVerificationError(name + " is " + actual
-					+ " does not match expected result: " + expected);
+		if (!expected.equalsIgnoreCase(actual) )
+
+			addVerificationError(name + " is '" + actual
+					+ "' does not match expected result: " + expected);
 	}
 
-	public  void assert2StringsNotEquals(String name, String expected,
+	public void assert2StringsNotEquals(String name, String expected,
 			String actual) throws Exception {
 		if (expected.equals(actual))
 
 			addVerificationError(name + " is " + actual + " should not match: "
 					+ expected);
 	}
-	
-	public  void assertStringContains(String name, String expected, String actual)
+
+	public void assertStringContains(String name, String expected, String actual)
 			throws Exception {
 		if (!actual.contains(expected))
-		
+
 			addVerificationError(name + " is " + actual
 					+ " does not contains expected result: " + expected);
 	}
-	
-	public  void assertisTrue(String name, boolean cond){
+
+	public void assertisTrue(String name, boolean cond) {
 		if (!cond)
-			addVerificationError("Error: " + name );
-		
+			addVerificationError("Error: " + name);
+
 	}
 
-	public  void assertEquals(String name, int expected, int actual) {
-		if(expected != actual)
-				addVerificationError("Error: " + name + " expected " + expected + " actual " +actual);
+	public void assertEquals(String name, int expected, int actual) {
+		if (expected != actual)
+			addVerificationError("Error: " + name + " expected " + expected
+					+ " actual " + actual);
 	}
-	
 
 	public int getTimeout() {
 		return timeout;

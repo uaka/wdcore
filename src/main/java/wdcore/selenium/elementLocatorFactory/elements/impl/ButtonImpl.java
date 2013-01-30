@@ -12,6 +12,7 @@ class ButtonImpl extends AbstractElement implements Button {
 
 //    @Override
     public void click() {
+    	LOG.debug("Click on " + wrappedElement);
         wrappedElement.click();
     }
 }

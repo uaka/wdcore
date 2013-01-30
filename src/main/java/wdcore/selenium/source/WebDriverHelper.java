@@ -17,10 +17,11 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import wdcore.selenium.source.Environment;
 import wdcore.selenium.source.map.BrowsersMap;
+import wdcore.selenium.source.map.RemoteConnectOptions;
 
 import com.opera.core.systems.OperaDriver;
+import org.openqa.selenium.Platform;
 
 public class WebDriverHelper extends HelperBase {
 
@@ -28,8 +29,9 @@ public class WebDriverHelper extends HelperBase {
 			.getLogger(WebDriverHelper.class);
 
 	private WebDriver driver;
-//	private String browserMode = BrowsersMap.FF;
-	private String defaultHub = "http://localhost:4444/wd/hub"; // change to
+	// private String browserMode = BrowsersMap.FF;
+	private String defaultHub = null;// "http://localhost:4444/wd/hub"; //
+										// change to
 	// "http://myserver:4444/wd/hub"
 	// to use remote webdriver by
 	// default
@@ -39,17 +41,19 @@ public class WebDriverHelper extends HelperBase {
 	private static String key = null;
 	private static int count = 0;
 
-	public void setDefaultHub(String newDefaultHub) {
-		defaultHub = newDefaultHub;
-	}
-//	
-//	public void setBrowser(String browser) {
-//		browserMode = browser;
-//	}
+	// public void setDefaultHub(String newDefaultHub) {
+	// defaultHub = newDefaultHub;
+	// }
+	//
+	// public void setBrowser(String browser) {
+	// browserMode = browser;
+	// }
 
-	private WebDriver newWebDriver(String hub, String browserMode) {
+	private WebDriver newWebDriver(RemoteConnectOptions options) {
+		String hub = options.getHub();
+		String browserMode = options.getBrowser();
 		driver = (hub == null) ? createLocalDriver(browserMode)
-				: createRemoteDriver(hub, browserMode);
+				: createRemoteDriver(options);
 		setImplicitWaitsOn();
 		key = browserMode + ":" + hub;
 		count = 0;
@@ -58,33 +62,45 @@ public class WebDriverHelper extends HelperBase {
 
 	public WebDriverHelper(Application manager) {
 		super(manager);
-		setDefaultHub(manager.getProperty("serverHost"));
+		String hub = manager.getProperty("serverHost", defaultHub);
+		String os = manager.getProperty("os");
 		String browserMode = manager.getProperty("browser", BrowsersMap.FF);
-		log.debug("Going to start " + browserMode + " on " + defaultHub);
+		String browserVersion = manager.getProperty("browserVersion");
 
-//		String browserMode = manager.getProperty("browser", BrowsersMap.FF);
-		//
-		// String hub = manager.getProperty("serverHost");
-		// setDefaultHub(hub);
+		RemoteConnectOptions options = new RemoteConnectOptions(hub, os,
+				browserMode, browserVersion);
 
-		driver = getDriver(defaultHub, browserMode);
+		// setDefaultHub(manager.getProperty("serverHost"));
+		log.debug("Going to start " + browserMode);
+
+		if (browserVersion != null)
+			log.debug("browserVersion = " + browserVersion);
+		if (os != null)
+			log.debug(" on os: " + os);
+		if (hub != null)
+			log.debug(" on hub: " + hub);
+
+		driver = getDriver(options);
 
 		// driver = new TracingWebDriver(driver); TODO
 		log.debug("Browser started");
-		// log.trace("Open main page {}", manager.getProperty("baseUrl"));
-		// driver.get(manager.getProperty("baseUrl"));
+
 	}
 
 	private static WebDriver createLocalDriver(String browserMode) {
+		log.debug("Starting local driver (no greed)");
 		if (browserMode.equals(BrowsersMap.FF)) {
 
 			try {
-				FirefoxProfile profile = FFProfileSetup.getFFProfile();
+				FirefoxProfile profile = FFProfileSetup.getFFProfile(manager
+						.getProperty("serverTestDir"), (manager.getProperty(
+						"debugMode", "false")).equalsIgnoreCase("true"));
 
 				return new FirefoxDriver(profile);
 			} catch (Exception e) {
 				log.warn("WARNING! Could not add firebug and firefinder extensions "
 						+ e.getMessage());
+
 				return new FirefoxDriver();
 			}
 
@@ -108,27 +124,51 @@ public class WebDriverHelper extends HelperBase {
 		return new FirefoxDriver();
 	}
 
-	private static WebDriver createRemoteDriver(String hub, String browserMode) {
-		DesiredCapabilities desiredCapabilities = browserMode
-				.equals(BrowsersMap.FF) ? DesiredCapabilities.firefox()
-				: browserMode.equals(BrowsersMap.IE) ? DesiredCapabilities
-						.internetExplorer()
-						: browserMode.equals(BrowsersMap.GOOGLE_CHROME) ? DesiredCapabilities
-								.chrome()
-								: browserMode.equals(BrowsersMap.OPERA) ? DesiredCapabilities
-										.opera() : DesiredCapabilities
-										.htmlUnit();
+	private static WebDriver createRemoteDriver(RemoteConnectOptions options) {
 
-		if (browserMode.equals(BrowsersMap.FF)) {
-			FirefoxProfile profile = FFProfileSetup.getFFProfile();
-			desiredCapabilities.setCapability(FirefoxDriver.PROFILE, profile);
+		String hub = options.getHub();
+		String browserMode = options.getBrowser();
+		String browserVersion = options.getBrowserVersion();
+		String os = options.getOs();
+
+		DesiredCapabilities capabillities = new DesiredCapabilities();
+
+		if (hub.contains("saucelabs")) {
+			capabillities.setBrowserName(browserMode);
+			if (browserVersion != null)
+				capabillities.setCapability("version", browserVersion);
+			// capabillities.setCapability("platform", Platform.valueOf(os));
+			if (os != null)
+				capabillities.setCapability("platform", os);
+			// capabillities.setCapability("name", method.getName());
 		}
+
+		else {
+			capabillities = browserMode.equals(BrowsersMap.FF) ? DesiredCapabilities
+					.firefox()
+					: browserMode.equals(BrowsersMap.IE) ? DesiredCapabilities
+							.internetExplorer()
+							: browserMode.equals(BrowsersMap.GOOGLE_CHROME) ? DesiredCapabilities
+									.chrome()
+									: browserMode.equals(BrowsersMap.OPERA) ? DesiredCapabilities
+											.opera() : DesiredCapabilities
+											.htmlUnit();
+
+		}
+		if (browserMode.equals(BrowsersMap.FF)) {
+			FirefoxProfile profile = FFProfileSetup.getFFProfile(manager
+					.getProperty("serverTestDir"), (manager.getProperty(
+					"debugMode", "false")).equalsIgnoreCase("true"));
+			capabillities.setCapability(FirefoxDriver.PROFILE, profile);
+		}
+
+		log.debug("Starting remote driver");
 
 		// desiredCapabilities.setJavascriptEnabled(true);
 		try {
 			return new ScreenshotRemoteWebDriver(new URL(hub), // TODO
-					desiredCapabilities);
-		} catch (MalformedURLException e) {
+					capabillities);
+		} catch (Exception e) {
 			e.printStackTrace();
 			throw new Error("Could not connect to remote WebDriver hub ", e);
 		}
@@ -159,30 +199,32 @@ public class WebDriverHelper extends HelperBase {
 		return driver;
 	}
 
-	public WebDriver getDriver(String hub, String browserMode) {
+	public WebDriver getDriver(RemoteConnectOptions options) {
 		count++;
+
 		// 1. WebDriver instance is not created yet
 		if (driver == null) {
-			return newWebDriver(hub, browserMode);
+			return newWebDriver(options);
 		}
 		// 2. Different flavour of WebDriver is required
-		String newKey = browserMode + ":" + hub;
+		String newKey = options.getBrowser() + ":" + options.getHub();
+
 		if (!newKey.equals(key)) {
 			dismissDriver();
 			key = newKey;
-			return newWebDriver(hub, browserMode);
+			return newWebDriver(options);
 		}
 		// 3. Browser is dead
 		try {
 			driver.getCurrentUrl();
 		} catch (Throwable t) {
 			t.printStackTrace();
-			return newWebDriver(hub, browserMode);
+			return newWebDriver(options);
 		}
 		// 4. It's time to restart
 		if (count > restartFrequency) {
 			dismissDriver();
-			return newWebDriver(hub, browserMode);
+			return newWebDriver(options);
 		}
 		// 5. Just use existing WebDriver instance
 		return driver;

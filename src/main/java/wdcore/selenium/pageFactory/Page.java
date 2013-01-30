@@ -12,7 +12,7 @@ import wdcore.selenium.source.WebdriverMethods;
 
 
 public abstract class Page {
-	protected static Logger log = LoggerFactory.getLogger(Page.class);
+	protected static Logger LOG = LoggerFactory.getLogger(Page.class);
 
 //	protected Application app;
 	protected WebdriverMethods wd;
