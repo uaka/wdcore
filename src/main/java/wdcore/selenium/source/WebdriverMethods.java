@@ -21,6 +21,7 @@ import org.openqa.selenium.Point;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriver.Window;
+
 import org.openqa.selenium.WebDriverException;
 //import org.openqa.selenium.WebDriver.Window;
 import org.openqa.selenium.WebElement;
@@ -1239,10 +1240,16 @@ public class WebdriverMethods extends SeleneseTestBase {
 
 	public void cleanCookies() {
 		driver.manage().deleteAllCookies();
-		// Adding a cookie to make sure the header stays on top
-		//
-		// Cookie cookie = new Cookie("header_stays_top", "true", "/", null);
-		// driver.manage().addCookie(cookie);
+
+	}
+
+	public void pinHeaderToTop() {
+		//		 Adding a cookie to make sure the header stays on top
+				
+				log.debug(" Adding a cookie to make sure the header stays on top");
+				 Cookie cookie = new Cookie("header_stays_top", "true", "/", null);
+				 driver.manage().addCookie(cookie);
+				 refresh();
 	}
 
 	public void fireEvent(String url, String eventName) {
