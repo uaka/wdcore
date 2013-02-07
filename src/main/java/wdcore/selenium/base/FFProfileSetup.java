@@ -1,4 +1,4 @@
-package wdcore.selenium.source;
+package wdcore.selenium.base;
 
 import java.io.File;
 
@@ -7,7 +7,7 @@ import org.openqa.selenium.firefox.FirefoxProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import wdcore.selenium.source.map.BrowsersMap;
+import wdcore.selenium.base.map.BrowsersMap;
 
 public class FFProfileSetup {
 	// private static final Logger log = Logger.getLogger(Application.class);

@@ -1,4 +1,4 @@
-package wdcore.selenium.source;
+package wdcore.selenium.base;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,8 +17,8 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import wdcore.selenium.source.map.BrowsersMap;
-import wdcore.selenium.source.map.RemoteConnectOptions;
+import wdcore.selenium.base.map.BrowsersMap;
+import wdcore.selenium.base.map.RemoteConnectOptions;
 
 import com.opera.core.systems.OperaDriver;
 import org.openqa.selenium.Platform;

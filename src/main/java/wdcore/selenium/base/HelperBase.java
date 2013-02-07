@@ -1,4 +1,4 @@
-package wdcore.selenium.source;
+package wdcore.selenium.base;
 
 public class HelperBase {
 

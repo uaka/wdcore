@@ -1,8 +1,8 @@
-package wdcore.selenium.source.map;
+package wdcore.selenium.base.map;
 
 import java.io.File;
 
-import wdcore.selenium.source.Environment;
+import wdcore.selenium.base.Environment;
 
 public class BrowsersMap {
 

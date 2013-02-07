@@ -1,4 +1,4 @@
-package wdcore.selenium.source.map;
+package wdcore.selenium.base.map;
 
 public class RemoteConnectOptions {
 

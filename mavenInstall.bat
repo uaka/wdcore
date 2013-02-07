@@ -1,0 +1,2 @@
+mvn install:install-file -Dfile=H:\diveboard.com\diveboard-autotests\diveboard-autotests\includes\   -DgroupId=uaka -DartifactId=wdcore -Dversion=0.0.1-SNAPSHOT -Dpackaging=jar   -DgeneratePom=true
+PAUSE
