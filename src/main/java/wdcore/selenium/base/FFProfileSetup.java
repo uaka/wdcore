@@ -38,9 +38,9 @@ public class FFProfileSetup {
 		File extension_asf = new File(BrowsersMap.FLD_FF_EXTENSIONS
 				+ "automatic_save_folder-1.0.4.xpi");
 		
-		if(!extension_asf.exists())
-			 extension_asf = new File(BrowsersMap.FLD_FF_EXTENSIONS1
-					+ "automatic_save_folder-1.0.4.xpi");
+//		if(!extension_asf.exists())
+//			 extension_asf = new File(BrowsersMap.FLD_FF_EXTENSIONS1
+//					+ "automatic_save_folder-1.0.4.xpi");
 		
 		try {
 			log.debug("Adding extension " +extension_asf.getAbsolutePath());
@@ -70,13 +70,13 @@ public class FFProfileSetup {
 					BrowsersMap.FLD_FF_EXTENSIONS
 							+ "firefinder_for_firebug-1.2.2-fx.xpi");
 			
-			if(!extension_firebug.exists()){
-				extension_firebug = new File(BrowsersMap.FLD_FF_EXTENSIONS1
-						+ "firebug-1.9.2-fx.xpi");
-				extension_firefinder = new File(
-						BrowsersMap.FLD_FF_EXTENSIONS1
-								+ "firefinder_for_firebug-1.2.2-fx.xpi");
-			}
+//			if(!extension_firebug.exists()){
+//				extension_firebug = new File(BrowsersMap.FLD_FF_EXTENSIONS1
+//						+ "firebug-1.9.2-fx.xpi");
+//				extension_firefinder = new File(
+//						BrowsersMap.FLD_FF_EXTENSIONS1
+//								+ "firefinder_for_firebug-1.2.2-fx.xpi");
+//			}
 
 			try {
 				log.debug("Adding extension " +extension_firebug.getAbsolutePath());
