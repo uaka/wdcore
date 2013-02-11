@@ -5,13 +5,11 @@
 
     <groupId>uaka</groupId>
     <artifactId>wdcore</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>SNAPSHOT</version>
     <packaging>jar</packaging>
-
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-              <selenium.version>2.28.0</selenium.version>
+        <selenium.version>2.28.0</selenium.version>
     </properties>
 
 
@@ -38,6 +36,15 @@
             <artifactId>slf4j-api</artifactId>
             <version>1.7.2</version>
         </dependency>
+
+
+        <dependency>
+         <groupId>com.google.guava</groupId>
+         <artifactId>guava</artifactId>
+         <version>r05</version>
+        </dependency>
+            
+
 
 
         <dependency>
@@ -75,7 +82,33 @@
                     </execution>
                 </executions>
             </plugin>
-        </plugins>
+       
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-compiler-plugin</artifactId>
+              <version>3.0</version>
+              <configuration>
+                <source>1.6</source>
+                <target>1.6</target>
+              </configuration>
+            </plugin>
+    </plugins>
+        
     </build>
+    
+    <distributionManagement>
+            <repository>
+                <id>releases</id>
+                <name>Releases</name>
+                <url>http://teamcity.quittance.com:8081/nexus/content/repositories/releases/</url>
+            </repository>
+
+            <snapshotRepository>
+                <id>snapshots</id>
+                <name>Snapshots</name>
+                <url>http://teamcity.quittance.com:8081/nexus/content/repositories/snapshots/</url>
+            </snapshotRepository>
+        </distributionManagement>
+    
 
 </project>
