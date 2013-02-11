@@ -19,236 +19,256 @@ import org.slf4j.LoggerFactory;
 
 import wdcore.selenium.base.map.BrowsersMap;
 import wdcore.selenium.base.map.RemoteConnectOptions;
+//import wdcore.selenium.base.map.RemoteConnectOptions;
 
 import com.opera.core.systems.OperaDriver;
 import org.openqa.selenium.Platform;
 
 public class WebDriverHelper extends HelperBase {
 
-	protected static Logger log = LoggerFactory
-			.getLogger(WebDriverHelper.class);
+    protected static Logger log = LoggerFactory.getLogger(WebDriverHelper.class);
 
-	private WebDriver driver;
-	// private String browserMode = BrowsersMap.FF;
-	private String defaultHub = null;// "http://localhost:4444/wd/hub"; //
-										// change to
-	// "http://myserver:4444/wd/hub"
-	// to use remote webdriver by
-	// default
+    public static void addChromeDriverPath() {
+        File file = new File(BrowsersMap.CHROME_DRIVER_PATH);
+        System.setProperty("webdriver.chrome.driver",
+                file.getAbsolutePath());
+    }
+    private WebDriver driver;
+    // private String browserMode = BrowsersMap.FF;
+    private String defaultHub = null;// "http://localhost:4444/wd/hub"; //
+    // change to
+    // "http://myserver:4444/wd/hub"
+    // to use remote webdriver by
+    // default
+    // Factory
+    private static int restartFrequency = Integer.MAX_VALUE;
+    private static String key = null;
+    private static int count = 0;
 
-	// Factory
-	private static int restartFrequency = Integer.MAX_VALUE;
-	private static String key = null;
-	private static int count = 0;
+    // public void setDefaultHub(String newDefaultHub) {
+    // defaultHub = newDefaultHub;
+    // }
+    //
+    // public void setBrowser(String browser) {
+    // browserMode = browser;
+    // }
+    private WebDriver newWebDriver(RemoteConnectOptions options) {
+        String hub = options.getHub();
+        String browserMode = options.getBrowser();
+        driver = (hub == null) ? createLocalDriver(browserMode)
+                : createRemoteDriver(options);
+        setImplicitWaitsOn();
+        key = browserMode + ":" + hub;
+        count = 0;
+        return driver;
+    }
 
-	// public void setDefaultHub(String newDefaultHub) {
-	// defaultHub = newDefaultHub;
-	// }
-	//
-	// public void setBrowser(String browser) {
-	// browserMode = browser;
-	// }
+    public WebDriverHelper(Application manager) {
+        super(manager);
+        String hub = manager.getProperty("serverHost", defaultHub);
+        String os = manager.getProperty("os");
+        String browserMode = manager.getProperty("browser", BrowsersMap.FF);
+        String browserVersion = manager.getProperty("browserVersion");
 
-	private WebDriver newWebDriver(RemoteConnectOptions options) {
-		String hub = options.getHub();
-		String browserMode = options.getBrowser();
-		driver = (hub == null) ? createLocalDriver(browserMode)
-				: createRemoteDriver(options);
-		setImplicitWaitsOn();
-		key = browserMode + ":" + hub;
-		count = 0;
-		return driver;
-	}
+        RemoteConnectOptions options = new RemoteConnectOptions(hub, os,
+                browserMode, browserVersion);
 
-	public WebDriverHelper(Application manager) {
-		super(manager);
-		String hub = manager.getProperty("serverHost", defaultHub);
-		String os = manager.getProperty("os");
-		String browserMode = manager.getProperty("browser", BrowsersMap.FF);
-		String browserVersion = manager.getProperty("browserVersion");
+        // setDefaultHub(manager.getProperty("serverHost"));
+        log.debug("Going to start " + browserMode);
 
-		RemoteConnectOptions options = new RemoteConnectOptions(hub, os,
-				browserMode, browserVersion);
+        if (browserVersion != null) {
+            log.debug("browserVersion = " + browserVersion);
+        }
+        if (os != null) {
+            log.debug(" on os: " + os);
+        }
+        if (hub != null) {
+            log.debug(" on hub: " + hub);
+        }
 
-		// setDefaultHub(manager.getProperty("serverHost"));
-		log.debug("Going to start " + browserMode);
+        driver = getDriver(options);
 
-		if (browserVersion != null)
-			log.debug("browserVersion = " + browserVersion);
-		if (os != null)
-			log.debug(" on os: " + os);
-		if (hub != null)
-			log.debug(" on hub: " + hub);
+        // driver = new TracingWebDriver(driver); TODO
+        log.debug("Browser started");
 
-		driver = getDriver(options);
+    }
 
-		// driver = new TracingWebDriver(driver); TODO
-		log.debug("Browser started");
+    private static WebDriver createLocalDriver(String browserMode) {
+        log.debug("Starting local driver (no greed)");
+        if (browserMode.equals(BrowsersMap.FF)) {
 
-	}
+            try {
+                FirefoxProfile profile = FFProfileSetup.getFFProfile(manager.getProperty("serverTestDir"), (manager.getProperty(
+                        "debugMode", "false")).equalsIgnoreCase("true"));
 
-	private static WebDriver createLocalDriver(String browserMode) {
-		log.debug("Starting local driver (no greed)");
-		if (browserMode.equals(BrowsersMap.FF)) {
+                return new FirefoxDriver(profile);
+            } catch (Exception e) {
+                log.warn("WARNING! Could not add firebug and firefinder extensions "
+                        + e.getMessage());
 
-			try {
-				FirefoxProfile profile = FFProfileSetup.getFFProfile(manager
-						.getProperty("serverTestDir"), (manager.getProperty(
-						"debugMode", "false")).equalsIgnoreCase("true"));
+                return new FirefoxDriver();
+            }
 
-				return new FirefoxDriver(profile);
-			} catch (Exception e) {
-				log.warn("WARNING! Could not add firebug and firefinder extensions "
-						+ e.getMessage());
+        }
 
-				return new FirefoxDriver();
-			}
+        if (browserMode.startsWith(BrowsersMap.IE)) {
+            addIEDriverPath();
+            return new InternetExplorerDriver();
+        }
+        if (browserMode.equals(BrowsersMap.GOOGLE_CHROME)) {
+            addChromeDriverPath();
+            return new ChromeDriver();
+        }
+        if (browserMode.equals(BrowsersMap.OPERA)) {
+            return new OperaDriver();
+        }
 
-		}
+        log.debug("Unknown browser, falling back to firefox");
+        return new FirefoxDriver();
+    }
 
-		if (browserMode.startsWith(BrowsersMap.IE)) {
-			File file = new File(BrowsersMap.IEDRIVER_PATH);
-			System.setProperty("webdriver.ie.driver", file.getAbsolutePath());
-			return new InternetExplorerDriver();
-		}
-		if (browserMode.equals(BrowsersMap.GOOGLE_CHROME)) {
-			File file = new File(BrowsersMap.CHROME_DRIVER_PATH);
-			System.setProperty("webdriver.chrome.driver",
-					file.getAbsolutePath());
-			return new ChromeDriver();
-		}
-		if (browserMode.equals(BrowsersMap.OPERA))
-			return new OperaDriver();
+    private static WebDriver createRemoteDriver(RemoteConnectOptions options) {
 
-		log.debug("Unknown browser, falling back to firefox");
-		return new FirefoxDriver();
-	}
+        String hub = options.getHub();
+        String browserMode = options.getBrowser();
+        String browserVersion = options.getBrowserVersion();
+        String os = options.getOs();
 
-	private static WebDriver createRemoteDriver(RemoteConnectOptions options) {
+        DesiredCapabilities capabillities = new DesiredCapabilities();
 
-		String hub = options.getHub();
-		String browserMode = options.getBrowser();
-		String browserVersion = options.getBrowserVersion();
-		String os = options.getOs();
+        if (hub.contains("saucelabs")) {
+            capabillities.setBrowserName(browserMode);
+            if (browserVersion != null) {
+                capabillities.setCapability("version", browserVersion);
+            }
+            // capabillities.setCapability("platform", Platform.valueOf(os));
+            if (os != null) {
+                capabillities.setCapability("platform", os);
+            }
+            // capabillities.setCapability("name", method.getName());
+        } else {
 
-		DesiredCapabilities capabillities = new DesiredCapabilities();
+            if (browserMode.equals(BrowsersMap.FF)) {
+                capabillities = DesiredCapabilities.firefox();
+                 FirefoxProfile profile = FFProfileSetup.getFFProfile(manager.getProperty("serverTestDir"), (manager.getProperty(
+                    "debugMode", "false")).equalsIgnoreCase("true"));
+            capabillities.setCapability(FirefoxDriver.PROFILE, profile);
+            } else if (browserMode.equals(BrowsersMap.IE)) {
+//                addIEDriverPath();
+                capabillities = DesiredCapabilities.internetExplorer();
+            } else if (browserMode.equals(BrowsersMap.GOOGLE_CHROME)) {
+//                addChromeDriverPath();
+                capabillities = DesiredCapabilities.chrome();
+            } else if (browserMode.equals(BrowsersMap.OPERA)) {
+                capabillities = DesiredCapabilities.opera();
+            } else capabillities = DesiredCapabilities.htmlUnit();
 
-		if (hub.contains("saucelabs")) {
-			capabillities.setBrowserName(browserMode);
-			if (browserVersion != null)
-				capabillities.setCapability("version", browserVersion);
-			// capabillities.setCapability("platform", Platform.valueOf(os));
-			if (os != null)
-				capabillities.setCapability("platform", os);
-			// capabillities.setCapability("name", method.getName());
-		}
+//			capabillities = browserMode.equals(BrowsersMap.FF) ? DesiredCapabilities
+//					.firefox()
+//					: browserMode.equals(BrowsersMap.IE) ?  DesiredCapabilities
+//							.internetExplorer()
+//							: browserMode.equals(BrowsersMap.GOOGLE_CHROME) ? DesiredCapabilities
+//									.chrome()
+//									: browserMode.equals(BrowsersMap.OPERA) ? DesiredCapabilities
+//											.opera() : DesiredCapabilities
+//											.htmlUnit();
 
-		else {
-			capabillities = browserMode.equals(BrowsersMap.FF) ? DesiredCapabilities
-					.firefox()
-					: browserMode.equals(BrowsersMap.IE) ? DesiredCapabilities
-							.internetExplorer()
-							: browserMode.equals(BrowsersMap.GOOGLE_CHROME) ? DesiredCapabilities
-									.chrome()
-									: browserMode.equals(BrowsersMap.OPERA) ? DesiredCapabilities
-											.opera() : DesiredCapabilities
-											.htmlUnit();
+        }
+       
+        log.debug("Starting remote driver");
 
-		}
-		if (browserMode.equals(BrowsersMap.FF)) {
-			FirefoxProfile profile = FFProfileSetup.getFFProfile(manager
-					.getProperty("serverTestDir"), (manager.getProperty(
-					"debugMode", "false")).equalsIgnoreCase("true"));
-			capabillities.setCapability(FirefoxDriver.PROFILE, profile);
-		}
+        // desiredCapabilities.setJavascriptEnabled(true);
+        try {
+            return new ScreenshotRemoteWebDriver(new URL(hub), 
+                    capabillities);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Error("Could not connect to remote WebDriver hub ", e);
+        }
+    }
 
-		log.debug("Starting remote driver");
+    public void dismissDriver() {
+        log.debug("Going to stop browser");
+        if (driver != null) {
+            driver.quit();
+            driver = null;
+            key = null;
+            log.debug("Browser stopped");
+        }
 
-		// desiredCapabilities.setJavascriptEnabled(true);
-		try {
-			return new ScreenshotRemoteWebDriver(new URL(hub), // TODO
-					capabillities);
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new Error("Could not connect to remote WebDriver hub ", e);
-		}
-	}
+    }
 
-	public void dismissDriver() {
-		log.debug("Going to stop browser");
-		if (driver != null) {
-			driver.quit();
-			driver = null;
-			key = null;
-			log.debug("Browser stopped");
-		}
+    //
+    // public void stop() {
+    // log.debug("Going to stop browser");
+    // driver.quit();
+    // log.debug("Browser stopped");
+    // }
+    public WebDriver getDriver() {
 
-	}
+        // String browserMode = manager.getProperty("browser", BrowsersMap.FF);
+        // return getDriver(defaultHub, browserMode);
+        return driver;
+    }
 
-	//
-	// public void stop() {
-	// log.debug("Going to stop browser");
-	// driver.quit();
-	// log.debug("Browser stopped");
-	// }
+    public WebDriver getDriver(RemoteConnectOptions options) {
+        count++;
 
-	public WebDriver getDriver() {
+        // 1. WebDriver instance is not created yet
+        if (driver == null) {
+            return newWebDriver(options);
+        }
+        // 2. Different flavour of WebDriver is required
+        String newKey = options.getBrowser() + ":" + options.getHub();
 
-		// String browserMode = manager.getProperty("browser", BrowsersMap.FF);
-		// return getDriver(defaultHub, browserMode);
-		return driver;
-	}
+        if (!newKey.equals(key)) {
+            dismissDriver();
+            key = newKey;
+            return newWebDriver(options);
+        }
+        // 3. Browser is dead
+        try {
+            driver.getCurrentUrl();
+        } catch (Throwable t) {
+            t.printStackTrace();
+            return newWebDriver(options);
+        }
+        // 4. It's time to restart
+        if (count > restartFrequency) {
+            dismissDriver();
+            return newWebDriver(options);
+        }
+        // 5. Just use existing WebDriver instance
+        return driver;
+    }
 
-	public WebDriver getDriver(RemoteConnectOptions options) {
-		count++;
+    public void setImplicitWaitsOff() {
+        log.trace("Set implicit waits off");
+        driver.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
+    }
 
-		// 1. WebDriver instance is not created yet
-		if (driver == null) {
-			return newWebDriver(options);
-		}
-		// 2. Different flavour of WebDriver is required
-		String newKey = options.getBrowser() + ":" + options.getHub();
+    public void setImplicitWaitsOn() {
+        log.trace("Set implicit waits on");
+        driver.manage().timeouts().implicitlyWait(manager.getTimeout(), TimeUnit.SECONDS);
+    }
 
-		if (!newKey.equals(key)) {
-			dismissDriver();
-			key = newKey;
-			return newWebDriver(options);
-		}
-		// 3. Browser is dead
-		try {
-			driver.getCurrentUrl();
-		} catch (Throwable t) {
-			t.printStackTrace();
-			return newWebDriver(options);
-		}
-		// 4. It's time to restart
-		if (count > restartFrequency) {
-			dismissDriver();
-			return newWebDriver(options);
-		}
-		// 5. Just use existing WebDriver instance
-		return driver;
-	}
+    public static void setImplicitWaitsOff(WebDriver driver) {
+        log.trace("Set implicit waits off");
+        driver.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
+    }
 
-	public void setImplicitWaitsOff() {
-		log.trace("Set implicit waits off");
-		driver.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
-	}
+    public static void setImplicitWaitsOn(WebDriver driver) {
+        log.trace("Set implicit waits on");
+        driver.manage().timeouts().implicitlyWait(manager.getImplicitWait(), TimeUnit.SECONDS);
+    }
 
-	public void setImplicitWaitsOn() {
-		log.trace("Set implicit waits on");
-		driver.manage().timeouts()
-				.implicitlyWait(manager.getTimeout(), TimeUnit.SECONDS);
-	}
-
-	public static void setImplicitWaitsOff(WebDriver driver) {
-		log.trace("Set implicit waits off");
-		driver.manage().timeouts().implicitlyWait(0, TimeUnit.SECONDS);
-	}
-
-	public static void setImplicitWaitsOn(WebDriver driver) {
-		log.trace("Set implicit waits on");
-		driver.manage().timeouts()
-				.implicitlyWait(manager.getImplicitWait(), TimeUnit.SECONDS);
-	}
+    public static void addIEDriverPath() {
+        File file = new File(BrowsersMap.IEDRIVER_PATH);
+        log.debug("Setting IE driver from " + file);
+        if(file.exists()){
+             System.setProperty("webdriver.ie.driver", file.getAbsolutePath());
+//              log.debug("File exists");
+        
+        } else   log.debug("File doesnt exist!!!!!!!!");
+    }
 }

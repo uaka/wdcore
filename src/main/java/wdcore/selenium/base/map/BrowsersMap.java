@@ -6,7 +6,7 @@ import wdcore.selenium.base.Environment;
 
 public class BrowsersMap {
 
-	public static String FF = "firefox";
+	public static final String FF = "firefox";
 	public static String IE = "ie";
 	
 	static String fldIncludes =  getIncludesFld();
