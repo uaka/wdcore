@@ -86,9 +86,11 @@ public class WebdriverMethods extends SeleneseTestBase {
 
 	public void onTestFailure(String errorText, Object failedMethodName) {
 		log.error("_________________________Breaking Exception_____________________________");
-		log.error(errorText);
+		if(errorText!= null){
+                log.error(errorText);
 		ver.addError(errorText);
-
+                }
+                else log.error("No any error text ");
 		// wd.makeScreenshotOnFailure();
 		makeScreenshot(Environment.appRoot + File.separator + "screenshot"
 				+ File.separator + "_failure_screenshot_" + failedMethodName

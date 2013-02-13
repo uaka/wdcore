@@ -48,6 +48,9 @@ public class VerificationErrors {
 	}
 
 	
-	
+	public void resetErrors(){
+            errorNum = 0;
+            verificationErrors.setLength(0);
+        }
 	
 }
