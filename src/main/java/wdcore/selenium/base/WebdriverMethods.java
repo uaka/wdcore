@@ -991,8 +991,13 @@ public class WebdriverMethods extends SeleneseTestBase {
 
     public boolean isVisible(String element) {
 //		WebDriverHelper.setImplicitWaitsOn(driver);
+         boolean result = false;
         try {
-            boolean result = getElement(element).isDisplayed();
+            for(WebElement webelem: getElementsList(element) ){
+                if(webelem.isDisplayed()){
+                return true;
+                }
+            }
             return result;
         } catch (Exception e) {
             // System.out.println(e.getMessage());
