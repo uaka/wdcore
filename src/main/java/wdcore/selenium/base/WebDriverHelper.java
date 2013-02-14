@@ -35,7 +35,7 @@ public class WebDriverHelper extends HelperBase {
     }
     private WebDriver driver;
     // private String browserMode = BrowsersMap.FF;
-    private String defaultHub = null;// "http://localhost:4444/wd/hub"; //
+    private String defaultHub = Environment.seleniumServerUrl;// "http://localhost:4444/wd/hub"; //
     // change to
     // "http://myserver:4444/wd/hub"
     // to use remote webdriver by
