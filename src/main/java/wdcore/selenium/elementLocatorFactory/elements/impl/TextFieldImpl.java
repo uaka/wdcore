@@ -30,4 +30,8 @@ class TextFieldImpl extends AbstractElement implements TextField {
 	public String getText() {
 		return wrappedElement.getText();
 	}
+        
+        public String getValue() {
+		return wrappedElement.getAttribute("value");
+	}
 }

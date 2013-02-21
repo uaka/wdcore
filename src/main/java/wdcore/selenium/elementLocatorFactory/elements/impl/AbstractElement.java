@@ -33,5 +33,9 @@ abstract class AbstractElement implements Element {
         return  wrappedElement.getText();
       }
     
+    
+     public String getAttribute(String attr) {
+		return wrappedElement.getAttribute(attr);
+	}
    
 }

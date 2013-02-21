@@ -8,4 +8,5 @@ public interface TextField extends Element {
     void clearAndType(String text);
     
     String getText();
+    String getValue();
 }

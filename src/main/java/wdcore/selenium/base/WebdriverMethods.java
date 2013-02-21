@@ -618,6 +618,10 @@ public class WebdriverMethods extends SeleneseTestBase {
         return driver.getCurrentUrl();
 
     }
+    
+    public String getHost() throws Exception{
+    return getEval("return window.document.domain");
+    }
 
     public void click(String element) throws Exception {
         try {
@@ -1157,6 +1161,15 @@ public class WebdriverMethods extends SeleneseTestBase {
         driver.switchTo().defaultContent();
     }
 
+    
+    
+      public void switchToNewWindow() {
+    //Switch to new window opened
+        for(String winHandle : driver.getWindowHandles()){
+            driver.switchTo().window(winHandle);
+        }
+    }
+    
     public void maximizeBrowserWindow() throws Exception {
 
         Window window = driver.manage().window();
