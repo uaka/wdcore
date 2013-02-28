@@ -103,7 +103,7 @@ public class WebDriverHelper extends HelperBase {
 
                 return new FirefoxDriver(profile);
             } catch (Exception e) {
-                log.warn("WARNING! Could not add firebug and firefinder extensions "
+                log.warn("WARNING! Could not create FF profile with extensions. "
                         + e.getMessage());
 
                 return new FirefoxDriver();

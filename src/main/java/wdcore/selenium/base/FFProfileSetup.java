@@ -65,10 +65,10 @@ public class FFProfileSetup {
 			//
 
 			File extension_firebug = new File(BrowsersMap.FLD_FF_EXTENSIONS
-					+ "firebug-1.9.2-fx.xpi");
+					+ "firebug-1.11.2-fx.xpi");
 			File extension_firefinder = new File(
 					BrowsersMap.FLD_FF_EXTENSIONS
-							+ "firefinder_for_firebug-1.2.2-fx.xpi");
+							+ "firefinder_for_firebug-1.2.5-fx.xpi");
 			
 //			if(!extension_firebug.exists()){
 //				extension_firebug = new File(BrowsersMap.FLD_FF_EXTENSIONS1
@@ -82,7 +82,7 @@ public class FFProfileSetup {
 				log.debug("Adding extension " +extension_firebug.getAbsolutePath());
 				profile.addExtension(extension_firebug);
 				profile.setPreference("extensions.firebug.currentVersion",
-						"1.9.2");
+						"1.11.2");
 				
 				log.trace("Adding extension " +extension_firefinder);
 				profile.addExtension(extension_firefinder);

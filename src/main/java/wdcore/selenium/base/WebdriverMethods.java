@@ -7,7 +7,6 @@ import java.util.Random;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
-//import org.apache.log4j.Logger;
 
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
@@ -730,7 +729,7 @@ public class WebdriverMethods extends SeleneseTestBase {
     }
 
     public void assertAlert(String text) throws Exception {
-
+    	log.debug("Verify and accept alert: "+ text);
         String AlertMessage = getConfirmation();
 
         if (!(AlertMessage.contains(text) || (AlertMessage.equalsIgnoreCase(text)))) {
@@ -1149,7 +1148,12 @@ public class WebdriverMethods extends SeleneseTestBase {
     public void refresh() {
         log.debug("refreshing page " + getLocation());
         driver.navigate().refresh();
-
+       
+    }
+    
+    public void back(){
+         log.debug("going to back page ");
+         driver.navigate().back();
     }
 
     public void selectFrame(String frameLocator) {
