@@ -16,7 +16,7 @@ public class VerificationErrors {
 	
 	int errorNum = 0;
 	
-	private StringBuilder verificationErrors  = new StringBuilder();;
+	private StringBuilder verificationErrors  = new StringBuilder();
 
 	public StringBuilder getError() {
 		return verificationErrors;

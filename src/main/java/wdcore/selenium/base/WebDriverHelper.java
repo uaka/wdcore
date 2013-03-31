@@ -177,14 +177,28 @@ public class WebDriverHelper extends HelperBase {
        
         log.debug("Starting remote driver");
 
+        WebDriver driver = null;
+        long startTime = System.currentTimeMillis();
+        long timeout = 60; //sec
+        while(driver == null && System.currentTimeMillis() - startTime < timeout*1000)
+        
         // desiredCapabilities.setJavascriptEnabled(true);
         try {
-            return new ScreenshotRemoteWebDriver(new URL(hub), 
+            driver =  new ScreenshotRemoteWebDriver(new URL(hub), 
                     capabillities);
+            break;
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new Error("Could not connect to remote WebDriver hub ", e);
+//            e.printStackTrace();
+//            throw new Error("Could not connect to remote WebDriver hub ", e);
+        	log.warn("Could not connect to remote WebDriver hub ", e);
         }
+        
+        if(driver!= null)
+        	return driver;
+        else
+        	  throw new Error("Could not connect to remote WebDriver hub ");
+        
+        
     }
 
     public void dismissDriver() {

@@ -617,9 +617,9 @@ public class WebdriverMethods extends SeleneseTestBase {
         return driver.getCurrentUrl();
 
     }
-    
-    public String getHost() throws Exception{
-    return getEval("return window.document.domain");
+
+    public String getHost() throws Exception {
+        return getEval("return window.document.domain");
     }
 
     public void click(String element) throws Exception {
@@ -729,7 +729,7 @@ public class WebdriverMethods extends SeleneseTestBase {
     }
 
     public void assertAlert(String text) throws Exception {
-    	log.debug("Verify and accept alert: "+ text);
+        log.debug("Verify and accept alert: " + text);
         String AlertMessage = getConfirmation();
 
         if (!(AlertMessage.contains(text) || (AlertMessage.equalsIgnoreCase(text)))) {
@@ -994,11 +994,11 @@ public class WebdriverMethods extends SeleneseTestBase {
 
     public boolean isVisible(String element) {
 //		WebDriverHelper.setImplicitWaitsOn(driver);
-         boolean result = false;
+        boolean result = false;
         try {
-            for(WebElement webelem: getElementsList(element) ){
-                if(webelem.isDisplayed()){
-                return true;
+            for (WebElement webelem : getElementsList(element)) {
+                if (webelem.isDisplayed()) {
+                    return true;
                 }
             }
             return result;
@@ -1148,12 +1148,12 @@ public class WebdriverMethods extends SeleneseTestBase {
     public void refresh() {
         log.debug("refreshing page " + getLocation());
         driver.navigate().refresh();
-       
+
     }
-    
-    public void back(){
-         log.debug("going to back page ");
-         driver.navigate().back();
+
+    public void back() {
+        log.debug("going to back page ");
+        driver.navigate().back();
     }
 
     public void selectFrame(String frameLocator) {
@@ -1165,25 +1165,27 @@ public class WebdriverMethods extends SeleneseTestBase {
         driver.switchTo().defaultContent();
     }
 
-    
-    
-      public void switchToNewWindow() {
-    //Switch to new window opened
-        for(String winHandle : driver.getWindowHandles()){
+    public void switchToNewWindow() {
+        //Switch to new window opened
+        for (String winHandle : driver.getWindowHandles()) {
             driver.switchTo().window(winHandle);
         }
     }
-    
-    public void maximizeBrowserWindow() throws Exception {
 
-        Window window = driver.manage().window();
-        Point zero = new Point(0, 0);
-        window.setPosition(zero);
-        String width = getEval("return window.screen.availWidth;");
-        String height = getEval("return window.screen.availHeight;");
-        Dimension dim = new Dimension(Integer.parseInt(width),
-                Integer.parseInt(height));
-        window.setSize(dim);
+    public void maximizeBrowserWindow() throws Exception {
+        try {
+            Window window = driver.manage().window();
+            Point zero = new Point(0, 0);
+            window.setPosition(zero);
+            String width = getEval("return window.screen.availWidth;");
+            String height = getEval("return window.screen.availHeight;");
+            Dimension dim = new Dimension(Integer.parseInt(width),
+                    Integer.parseInt(height));
+            window.setSize(dim);
+        } catch (Exception e) {
+            log.warn("Could not maximize browser window!" + e);
+            
+        }
 
     }
 
