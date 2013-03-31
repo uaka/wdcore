@@ -8,11 +8,11 @@ import wdcore.selenium.elementLocatorFactory.elements.Selector;
 
 class SelectorImpl extends AbstractElement implements Selector {
 
-    Select select;
+//    Select select;
 
     protected SelectorImpl(final WebElement wrappedElement) {
         super(wrappedElement);
-        select = new Select(wrappedElement);
+//        select = new Select(wrappedElement);
 
     }
 
@@ -21,7 +21,7 @@ class SelectorImpl extends AbstractElement implements Selector {
         LOG.debug("Select '" + value + "' in " + wrappedElement);
 
 
-//			Select select = new Select(wrappedElement);
+			Select select = new Select(wrappedElement);
         if (value.startsWith("value=")) {
             select.selectByValue(value.replace("value=", ""));
         } else if (value.startsWith("label=")) {
@@ -37,6 +37,7 @@ class SelectorImpl extends AbstractElement implements Selector {
 
     @Override
     public StringBuilder getOptionsText() {
+        	Select select = new Select(wrappedElement);
         StringBuilder result = new StringBuilder();
         List<WebElement> options = select.getOptions();
 
